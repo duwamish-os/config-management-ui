@@ -6,6 +6,8 @@ import org.scalatra.json.JacksonJsonSupport
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.json._
 
+import scala.concurrent.Future
+
 class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport {
 
   protected implicit val jsonFormats: Formats = DefaultFormats
@@ -22,4 +24,9 @@ class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport {
     Map("config" -> ConfigDatabase.lookup("order received"))
   }
 
+  get("/config_non_blocking") {
+    Future {
+      Map("config" -> ConfigDatabase.lookup("order received"))
+    }
+  }
 }

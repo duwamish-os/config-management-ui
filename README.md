@@ -2,7 +2,7 @@
 start server
 -------------
 
-```
+```bash
 [info] Loading global plugins from /Users/prayagupd/.sbt/0.13/plugins
 [info] Loading project definition from /Users/prayagupd/config-management-ui/project
 [info] Set current project to config-management-ui (in build file:/Users/prayagupd/config-management-ui/)
@@ -26,7 +26,7 @@ SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further detail
 2018-04-08 13:37:39.583:INFO:oejs.Server:main: Started @3238ms
 ```
 
-```
+```bash
 $ curl localhost:8080
 config management
 
@@ -37,7 +37,7 @@ curl localhost:8080/config
 using tomcat
 ------------
 
-```
+```scala
 sbt package
 cp target/scala-2.12/config-management-ui_2.12-0.1.war /usr/local/apache-tomcat-8.5.12/webapps/
 /usr/local/apache-tomcat-8.5.12/bin/startup.sh
@@ -49,68 +49,10 @@ curl localhost:9090/config-management-ui_2.12-0.1/config
 perf
 ----
 
-```
-ab -n 10000 -c 100 -k 127.0.0.1:9090/config-management-ui_2.12-0.1/config
-This is ApacheBench, Version 2.3 <$Revision: 1807734 $>
-Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
-Licensed to The Apache Software Foundation, http://www.apache.org/
-
-Benchmarking 127.0.0.1 (be patient)
-Completed 1000 requests
-Completed 2000 requests
-Completed 3000 requests
-Completed 4000 requests
-Completed 5000 requests
-Completed 6000 requests
-Completed 7000 requests
-Completed 8000 requests
-Completed 9000 requests
-Completed 10000 requests
-Finished 10000 requests
-
-
-Server Software:
-Server Hostname:        127.0.0.1
-Server Port:            9090
-
-Document Path:          /config-management-ui_2.12-0.1/config
-Document Length:        73 bytes
-
-Concurrency Level:      100
-Time taken for tests:   2.665 seconds
-Complete requests:      10000
-Failed requests:        0
-Keep-Alive requests:    9937
-Total transferred:      2169685 bytes
-HTML transferred:       730000 bytes
-Requests per second:    3751.70 [#/sec] (mean)
-Time per request:       26.655 [ms] (mean)
-Time per request:       0.267 [ms] (mean, across all concurrent requests)
-Transfer rate:          794.92 [Kbytes/sec] received
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:        0    0   1.9      0      48
-Processing:     1   26  24.5     19     214
-Waiting:        0   26  24.5     19     214
-Total:          1   27  24.6     19     214
-
-Percentage of the requests served within a certain time (ms)
-  50%     19
-  66%     25
-  75%     30
-  80%     33
-  90%     52
-  95%     78
-  98%    111
-  99%    131
- 100%    214 (longest request)
-```
-
 1M
 ---
 
-```
+```bash
 ab -n 1000000 -c 100 -k 127.0.0.1:9090/config-management-ui_2.12-0.1/config
 This is ApacheBench, Version 2.3 <$Revision: 1807734 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
@@ -166,6 +108,67 @@ Percentage of the requests served within a certain time (ms)
   98%     11
   99%     14
  100%    228 (longest request)
+```
+
+10M
+---
+
+```bash
+ab -n 10000000 -c 100 -k 127.0.0.1:9090/config-management-ui_2.12-0.1/config
+This is ApacheBench, Version 2.3 <$Revision: 1807734 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 127.0.0.1 (be patient)
+Completed 1000000 requests
+Completed 2000000 requests
+Completed 3000000 requests
+Completed 4000000 requests
+Completed 5000000 requests
+Completed 6000000 requests
+Completed 7000000 requests
+Completed 8000000 requests
+Completed 9000000 requests
+Completed 10000000 requests
+Finished 10000000 requests
+
+
+Server Software:
+Server Hostname:        127.0.0.1
+Server Port:            9090
+
+Document Path:          /config-management-ui_2.12-0.1/config
+Document Length:        73 bytes
+
+Concurrency Level:      100
+Time taken for tests:   465.410 seconds
+Complete requests:      10000000
+Failed requests:        0
+Keep-Alive requests:    9900054
+Total transferred:      2169500270 bytes
+HTML transferred:       730000000 bytes
+Requests per second:    21486.45 [#/sec] (mean)
+Time per request:       4.654 [ms] (mean)
+Time per request:       0.047 [ms] (mean, across all concurrent requests)
+Transfer rate:          4552.23 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   1.1      0     425
+Processing:     0    5   7.4      4    1039
+Waiting:        0    4   7.4      4    1039
+Total:          0    5   7.6      4    1043
+
+Percentage of the requests served within a certain time (ms)
+  50%      4
+  66%      4
+  75%      5
+  80%      5
+  90%      6
+  95%      8
+  98%     12
+  99%     17
+ 100%   1043 (longest request)
 ```
 
 ![](scalatra_perf.png)
