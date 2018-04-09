@@ -5,7 +5,7 @@ import org.scalatra.ScalatraServlet
 import org.scalatra.json.JacksonJsonSupport
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.json._
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport {

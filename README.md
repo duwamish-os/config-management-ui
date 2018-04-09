@@ -46,6 +46,15 @@ curl localhost:9090/config-management-ui_2.12-0.1/config
 {"config":"your order has been received and will be shipped in a while."}
 ```
 
+using maven instead of sbt
+--------------------------
+
+- add scala compiler plugin
+
+```
+mvn clean package
+```
+
 perf
 ----
 
