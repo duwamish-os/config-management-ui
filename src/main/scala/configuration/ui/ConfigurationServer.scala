@@ -1,12 +1,9 @@
 package configuration.ui
 
-import java.util.UUID
-
 import configuration.db.ConfigDatabase
-import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
-import org.scalatra.json.JacksonJsonSupport
 import org.json4s.{DefaultFormats, Formats}
-import org.scalatra.json._
+import org.scalatra.json.JacksonJsonSupport
+import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.ExecutionContext.Implicits
@@ -41,7 +38,7 @@ class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport with F
   post("/chat") {
 
     new AsyncResult() {
-      override val is: Future[ChatResponse] = Future {
+      override val is: Future[ApiResponse] = Future {
         val r = request.body
         logger.info(r)
 
@@ -56,10 +53,15 @@ class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport with F
 
             ChatResponse(chatReq.correlationID, List(ChatDisplayCard("Hello, how can I help you?")))
 
-          case _ => throw new RuntimeException("userID is required.")
+          case None => errorHandling(ApiException("ValidationError", "UserID is required"))
         }
       }
     }
+  }
+
+  val errorHandling: PartialFunction[Throwable, ApiError] = {
+    case api: ApiException => ApiError(api.errorCode, api.errorMessage)
+    case a => ApiError("UnknownError", a.getMessage)
   }
 
   override protected implicit def executor: ExecutionContext = Implicits.global
@@ -68,9 +70,15 @@ class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport with F
 //TODO add UUID deserializer
 case class ChatRequest(correlationID: String, message: String)
 
-case class ChatResponse(correlationID: String, displayCards: List[ChatDisplayCard])
+case class ChatResponse(correlationID: String, displayCards: List[ChatDisplayCard]) extends ApiResponse
 
 case class ChatDisplayCard(displayText: String)
+
+trait ApiResponse
+
+case class ApiException(errorCode: String, errorMessage: String) extends RuntimeException(errorMessage)
+
+case class ApiError(errorCode: String, errorMessage: String) extends ApiResponse
 
 object ConfigurationServer {
   val logger: Logger = LoggerFactory.getLogger(classOf[ConfigurationServer])
