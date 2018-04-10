@@ -187,7 +187,7 @@ POST
 ----
 
 ```
-curl --request POST -H "userID: prayagupd" -H "Content-Type: application/json" -d '{"message": "whats up", "correlationID": "785e6efb-1d1a-497e-b1b7-a252c7060280"}' http://localhost:8080/chat
+curl --request POST -H "userID: prayagupd" -H "accessToken: accessToken" -H "Content-Type: application/json" -d '{"message": "whats up", "correlationID": "785e6efb-1d1a-497e-b1b7-a252c7060280"}' http://localhost:8080/chat
 {"correlationID":"785e6efb-1d1a-497e-b1b7-a252c7060280","displayCards":[{"displayText":"Hello, how can I help you?"}]}
 ```
 

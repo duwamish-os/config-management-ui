@@ -7,6 +7,7 @@ import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.concurrent.ExecutionContext.Implicits
+import scala.concurrent.duration.{Duration, _}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport with FutureSupport {
@@ -14,6 +15,8 @@ class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport with F
   import ConfigurationServer._
 
   protected implicit val jsonFormats: Formats = DefaultFormats
+
+  protected implicit def executor: ExecutionContext = Implicits.global
 
   before() {
     contentType = formats("json")
@@ -35,27 +38,30 @@ class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport with F
 
   case class User(id: String, accessToken: String)
 
+  def chatReqValidation: ((String, String) => Either[ApiException, Boolean]) = (userID, accessToken) =>
+    if (userID == null) Left(ApiException("ValidationError", "UserID is required"))
+    else if (accessToken == null) Left(ApiException("ValidationError", "accessToken is required"))
+    else Right(true)
+
   post("/chat") {
 
     new AsyncResult() {
       override val is: Future[ApiResponse] = Future {
-        val r = request.body
-        logger.info(r)
+        val reqPayload = request.body
+        logger.info("ChatRequest:" + reqPayload)
 
-        val userID = Option(request.getHeader("userID"))
-        val accessToken = Option(request.getHeader("accessToken"))
-
-        userID match {
-          case Some(a) =>
-            val chatReq = parse(r).extract[ChatRequest]
+        chatReqValidation(request.getHeader("userID"), request.getHeader("accessToken")) match {
+          case Left(a) => errorHandling(a)
+          case Right(_) =>
+            val chatReq = parse(reqPayload).extract[ChatRequest]
 
             response.setStatus(200)
 
             ChatResponse(chatReq.correlationID, List(ChatDisplayCard("Hello, how can I help you?")))
-
-          case None => errorHandling(ApiException("ValidationError", "UserID is required"))
         }
       }
+
+      override implicit def timeout: Duration = 15 seconds
     }
   }
 
@@ -63,8 +69,6 @@ class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport with F
     case api: ApiException => ApiError(api.errorCode, api.errorMessage)
     case a => ApiError("UnknownError", a.getMessage)
   }
-
-  override protected implicit def executor: ExecutionContext = Implicits.global
 }
 
 //TODO add UUID deserializer
