@@ -3,16 +3,16 @@ package configuration.ui
 import java.util.UUID
 
 import configuration.db.ConfigDatabase
-import org.scalatra.ScalatraServlet
+import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
 import org.scalatra.json.JacksonJsonSupport
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.json._
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits
+import scala.concurrent.{ExecutionContext, Future}
 
-class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport {
+class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport with FutureSupport {
 
   import ConfigurationServer._
 
@@ -36,18 +36,33 @@ class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport {
     }
   }
 
+  case class User(id: String, accessToken: String)
+
   post("/chat") {
 
-    val r = request.body
-    logger.info(r)
+    new AsyncResult() {
+      override val is: Future[ChatResponse] = Future {
+        val r = request.body
+        logger.info(r)
 
-    val chatReq = parse(r).extract[ChatRequest]
+        val userID = Option(request.getHeader("userID"))
+        val accessToken = Option(request.getHeader("accessToken"))
 
-    response.setStatus(200)
+        userID match {
+          case Some(a) =>
+            val chatReq = parse(r).extract[ChatRequest]
 
-    ChatResponse(chatReq.correlationID, List(ChatDisplayCard("Hello, how can I help you?")))
+            response.setStatus(200)
+
+            ChatResponse(chatReq.correlationID, List(ChatDisplayCard("Hello, how can I help you?")))
+
+          case _ => throw new RuntimeException("userID is required.")
+        }
+      }
+    }
   }
 
+  override protected implicit def executor: ExecutionContext = Implicits.global
 }
 
 //TODO add UUID deserializer
