@@ -181,3 +181,11 @@ Percentage of the requests served within a certain time (ms)
 ```
 
 ![](scalatra_perf.png)
+
+
+POST
+----
+
+```
+curl --request POST -H "Content-Type: application/json" -d '{"message": "whats up", "correlationID": "785e6efb-1d1a-497e-b1b7-a252c7060280"}' http://localhost:8080/chat
+```
