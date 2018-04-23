@@ -2,7 +2,27 @@
 start server
 -------------
 
+config-storage
+--------------
+
+
+```
+docker run --name mongodb -it --rm -p 27017:27017 mongodb
+
+docker exec -it bc5f4413b86c bash
+
+> show dbs
+ConfigDb  0.000GB
+admin     0.000GB
+config    0.000GB
+local     0.000GB
+
+> db.MessagingTemplate.find({"messaging.food_status": "order received"})
+{ "_id" : ObjectId("5add4bc8baaa012dcc69b5eb"), "food_type" : "delivery", "messaging" : { "food_status" : "order received", "messaging" : "We just received your order for food. Stay tuned for delivery." } }
+```
+
 ```bash
+sbt
 [info] Loading global plugins from /Users/prayagupd/.sbt/0.13/plugins
 [info] Loading project definition from /Users/prayagupd/config-management-ui/project
 [info] Set current project to config-management-ui (in build file:/Users/prayagupd/config-management-ui/)

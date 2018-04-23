@@ -1,6 +1,6 @@
 package configuration.ui
 
-import configuration.db.ConfigDatabase
+import configuration.db.{LevelDbConfigurationTemplate, MongoConfigurationTemplate}
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.json.JacksonJsonSupport
 import org.scalatra.{AsyncResult, FutureSupport, ScalatraServlet}
@@ -26,13 +26,13 @@ class ConfigurationServer extends ScalatraServlet with JacksonJsonSupport with F
     "config management"
   }
 
-  get("/config") {
-    Map("config" -> ConfigDatabase.lookup("order received"))
+  get("/config/update") {
+    Map("config updated" -> MongoConfigurationTemplate.addConfig("order received", "We just received your order for food. Stay tuned for delivery."))
   }
 
-  get("/config_non_blocking") {
+  get("/config/list") {
     Future {
-      Map("config" -> ConfigDatabase.lookup("order received"))
+      Map("config" -> MongoConfigurationTemplate.getConfig("order received"))
     }
   }
 

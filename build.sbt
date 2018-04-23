@@ -14,6 +14,8 @@ libraryDependencies += "org.scalatra" %% "scalatra" % "2.6.3"
 libraryDependencies += "org.scalatra" %% "scalatra-json" % "2.6.3"
 libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.5.2"
 
+libraryDependencies += "org.mongodb" %% "casbah" % "3.1.1"
+
 libraryDependencies += "javax.servlet" % "javax.servlet-api" % "3.1.0" % "provided"
 
 enablePlugins(JettyPlugin)

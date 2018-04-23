@@ -5,7 +5,7 @@ import java.io._
 import org.iq80.leveldb._
 import org.iq80.leveldb.impl.Iq80DBFactory._
 
-object ConfigDatabase {
+object LevelDbConfigurationTemplate {
 
   val database: DB = factory.open(new File("templates"), new Options().createIfMissing(true))
 
